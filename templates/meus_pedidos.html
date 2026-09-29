@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Meus Pedidos | Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+    <a href="/" class="logo">Império do Mauro</a>
+    <form class="search-bar" method="GET" action="/">
+        <input type="text" name="busca" placeholder="Buscar" value="{{ busca or '' }}">
+        <button type="submit">Ir</button>
+    </form>
+    <div class="nav-links">
+        <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+            🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+        </a>
+        {% if session.get('adm') %}
+            <a href="/painel">Painel</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        {% elif cliente_logado %}
+            <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+            <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+            <a href="/sair-cliente" class="btn-tesla">Sair</a>
+        {% else %}
+            <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+            <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+        {% endif %}
+    </div>
+</nav>
+
+    <section style="padding: 140px 48px 40px; text-align: center;">
+        <div class="badge-tesla" style="margin-bottom: 20px;">Histórico</div>
+        <h1 style="font-size: clamp(32px, 5vw, 56px); font-weight: 200; letter-spacing: -0.02em;">
+            Meus pedidos
+        </h1>
+    </section>
+
+    <section class="section-tesla" style="padding-top: 40px; max-width: 900px;">
+        {% if pedidos %}
+            {% for p in pedidos %}
+                <a href="/pedido/{{ p[0] }}" style="text-decoration: none;">
+                    <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 24px; margin-bottom: 12px; transition: all 0.2s;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+                            <div>
+                                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 4px;">Pedido #{{ p[0] }}</p>
+                                <p style="color: var(--gray-400); font-size: 13px;">{{ p[3][:10] }}</p>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 20px;">
+                                <span style="background: rgba(243,156,18,0.15); color: #f39c12; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; font-weight: 600; padding: 6px 12px; border-radius: 3px;">
+                                    {{ p[2] }}
+                                </span>
+                                <span style="font-size: 20px; font-weight: 300; color: var(--white);">R$ {{ "%.2f"|format(p[1]) }}</span>
+                                <span style="color: var(--tesla-red);">→</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 100px 20px; background: var(--gray-900); border-radius: 8px;">
+                <div style="font-size: 80px; opacity: 0.3; margin-bottom: 24px;">📦</div>
+                <h3 style="font-weight: 300; font-size: 24px; margin-bottom: 12px;">Nenhum pedido ainda</h3>
+                <p style="color: var(--gray-500); margin-bottom: 32px;">Quando você comprar algo, aparece aqui</p>
+                <a href="/" class="btn-tesla-outline">Explorar lojas</a>
+            </div>
+        {% endif %}
+    </section>
+
+</body>
+</html>

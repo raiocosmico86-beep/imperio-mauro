@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido #{{ pedido[0] }} | Admin</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .status-badge {
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 3px;
+        }
+        .status-pendente { background: rgba(243,156,18,0.15); color: #f39c12; }
+        .status-enviado { background: rgba(52,152,219,0.15); color: #3498db; }
+        .status-entregue { background: rgba(46,204,113,0.15); color: #2ecc71; }
+        .status-cancelado { background: rgba(231,76,60,0.15); color: #e74c3c; }
+        .acoes-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        .btn-acao {
+            padding: 12px 24px;
+            border-radius: 4px;
+            border: 1px solid var(--border-subtle);
+            background: transparent;
+            color: var(--white);
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-acao:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+        .btn-perigo {
+            border-color: rgba(232,33,39,0.4);
+            color: #e74c3c;
+        }
+        .btn-perigo:hover {
+            background: #e74c3c;
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <div class="nav-links" style="margin-left: auto;">
+            <a href="/admin/pedidos">← Voltar</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        </div>
+    </nav>
+
+    <section style="padding: 140px 48px 40px;">
+        <div style="max-width: 900px; margin: 0 auto;">
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 40px;">
+                <div>
+                    <div class="section-label">Pedido</div>
+                    <h1 style="font-size: clamp(32px, 5vw, 56px); font-weight: 200; letter-spacing: -0.02em; margin-top: 8px;">
+                        #{{ pedido[0] }}
+                    </h1>
+                    <p style="color: var(--gray-500); font-size: 13px; margin-top: 8px;">{{ pedido[8][:19] }}</p>
+                </div>
+                <span class="status-badge status-{{ pedido[7] }}" style="font-size: 12px; padding: 10px 18px;">
+                    {{ pedido[7] }}
+                </span>
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px; margin-bottom: 24px;">
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 20px;">Cliente</p>
+                <p style="color: var(--white); font-size: 16px;">{{ pedido[9] }}</p>
+                <p style="color: var(--gray-400); font-size: 14px;">{{ pedido[10] }}</p>
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px; margin-bottom: 24px;">
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 20px;">Endereço de entrega</p>
+                <p style="color: var(--white);">{{ pedido[2] }}</p>
+                <p style="color: var(--gray-300); font-size: 14px;">{{ pedido[3] }}</p>
+                <p style="color: var(--gray-300); font-size: 14px;">{{ pedido[4] }} - CEP {{ pedido[5] }}</p>
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px; margin-bottom: 24px;">
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 20px;">Itens do pedido</p>
+
+                {% for item in itens %}
+                    <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border-subtle);">
+                        <div>
+                            <p style="color: var(--white); font-size: 14px;">{{ item[0] }}</p>
+                            <p style="color: var(--gray-500); font-size: 12px;">x{{ item[2] }}</p>
+                        </div>
+                        <p style="color: var(--white); font-size: 14px;">R$ {{ "%.2f"|format(item[1] * item[2]) }}</p>
+                    </div>
+                {% endfor %}
+
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between;">
+                    <span style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500);">Total</span>
+                    <span style="font-size: 28px; font-weight: 200; color: var(--white);">R$ {{ "%.2f"|format(pedido[6]) }}</span>
+                </div>
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px;">
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 20px;">Ações</p>
+
+                <div class="acoes-grid">
+                    {% if pedido[7] == 'pendente' %}
+                        <form method="POST" action="/admin/pedido/{{ pedido[0] }}/status/enviado">
+                            <button type="submit" class="btn-acao">📦 Marcar como enviado</button>
+                        </form>
+                    {% endif %}
+
+                    {% if pedido[7] == 'enviado' %}
+                        <form method="POST" action="/admin/pedido/{{ pedido[0] }}/status/entregue">
+                            <button type="submit" class="btn-acao">✅ Marcar como entregue</button>
+                        </form>
+                    {% endif %}
+
+                    {% if pedido[7] in ['pendente', 'enviado'] %}
+                        <form method="POST" action="/admin/pedido/{{ pedido[0] }}/status/cancelado" onsubmit="return confirm('Cancelar esse pedido?')">
+                            <button type="submit" class="btn-acao btn-perigo">❌ Cancelar pedido</button>
+                        </form>
+                    {% endif %}
+
+                    {% if pedido[7] in ['entregue', 'cancelado'] %}
+                        <p style="color: var(--gray-500); font-size: 13px; padding: 12px 0;">
+                            Esse pedido tá finalizado.
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>

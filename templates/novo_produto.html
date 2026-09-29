@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Novo Produto | {{ loja[1] }}</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar-tesla">
+    <a href="/" class="logo">Império do Mauro</a>
+    <form class="search-bar" method="GET" action="/">
+        <input type="text" name="busca" placeholder="Buscar" value="{{ busca or '' }}">
+        <button type="submit">Ir</button>
+    </form>
+    <div class="nav-links">
+        <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+            🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+        </a>
+        {% if session.get('adm') %}
+            <a href="/painel">Painel</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        {% elif cliente_logado %}
+            <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+            <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+            <a href="/sair-cliente" class="btn-tesla">Sair</a>
+        {% else %}
+            <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+            <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+        {% endif %}
+    </div>
+</nav>
+
+    <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 100px 24px 60px;">
+        <div class="form-tesla" style="max-width: 560px;">
+            <div class="badge-tesla" style="display: block; text-align: center; margin-bottom: 20px;">Novo item</div>
+            <h2>Adicionar produto</h2>
+            <p class="form-subtitle">Loja <strong style="color: var(--white);">{{ loja[1] }}</strong></p>
+
+            {% if erro %}
+                <div style="background: rgba(232,33,39,0.1); border: 1px solid rgba(232,33,39,0.4); color: var(--tesla-red); padding: 14px; border-radius: 4px; margin-bottom: 16px; font-size: 13px;">
+                    ⚠️ {{ erro }}
+                </div>
+            {% endif %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <input type="text" name="nome" class="input-tesla" placeholder="Nome do produto" required autofocus>
+                <input type="number" step="0.01" min="0" name="preco" class="input-tesla" placeholder="Preço (R$)" required>
+                <textarea name="descricao" class="input-tesla" placeholder="Descrição" required></textarea>
+                <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px;">
+                    Foto do produto <span style="color: var(--tesla-red);">*</span>
+                </label>
+                <input type="file" name="imagem" accept="image/*" class="input-tesla" style="padding: 10px;" required>
+                <button type="submit" class="btn-tesla-full">Cadastrar produto</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

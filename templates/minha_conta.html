@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head><meta charset="UTF-8"><title>Minha Conta</title>
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="stylesheet" href="/static/css/style.css"></head>
+<body>
+<nav class="navbar-tesla">
+    <a href="/" class="logo">Império do Mauro</a>
+    <form class="search-bar" method="GET" action="/">
+        <input type="text" name="busca" placeholder="Buscar" value="{{ busca or '' }}">
+        <button type="submit">Ir</button>
+    </form>
+    <div class="nav-links">
+        <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+            🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+        </a>
+        {% if session.get('adm') %}
+            <a href="/painel">Painel</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        {% elif cliente_logado %}
+            <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+            <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+            <a href="/sair-cliente" class="btn-tesla">Sair</a>
+        {% else %}
+            <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+            <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+        {% endif %}
+    </div>
+</nav>
+<section style="padding:140px 48px 40px;text-align:center;">
+<h1 style="font-size:48px;font-weight:200;">Olá, {{ cliente[1] }}</h1>
+</section>
+<section style="max-width:700px;margin:0 auto;padding:0 24px;">
+<div style="background:var(--gray-900);border:1px solid var(--border-subtle);border-radius:8px;padding:32px;">
+<p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);">Nome</p>
+<p style="color:var(--white);margin-bottom:20px;">{{ cliente[1] }}</p>
+<p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);">Email</p>
+<p style="color:var(--white);">{{ cliente[2] }}</p>
+</div>
+<div style="text-align:center;margin-top:32px;"><a href="/" class="btn-tesla-outline">Continuar comprando</a></div>
+</section>
+</body></html>

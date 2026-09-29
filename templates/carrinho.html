@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho | Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .carrinho-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 140px 48px 80px;
+        }
+        .carrinho-item {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 24px;
+            align-items: center;
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .carrinho-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        .carrinho-item .placeholder {
+            width: 100px;
+            height: 100px;
+            background: var(--gray-800);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .quantidade-ctrl {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .quantidade-ctrl button {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--white);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .quantidade-ctrl button:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+        .quantidade-ctrl span {
+            min-width: 32px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .carrinho-resumo {
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 32px;
+            position: sticky;
+            top: 100px;
+        }
+        .carrinho-resumo .total {
+            font-size: 36px;
+            font-weight: 200;
+            color: var(--white);
+            letter-spacing: -0.02em;
+            margin: 16px 0 24px 0;
+        }
+        @media (max-width: 768px) {
+            .carrinho-wrapper { padding: 100px 20px 60px; }
+            .carrinho-item { grid-template-columns: 80px 1fr; }
+            .carrinho-item img, .carrinho-item .placeholder { width: 80px; height: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+    <a href="/" class="logo">Império do Mauro</a>
+    <form class="search-bar" method="GET" action="/">
+        <input type="text" name="busca" placeholder="Buscar" value="{{ busca or '' }}">
+        <button type="submit">Ir</button>
+    </form>
+    <div class="nav-links">
+        <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+            🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+        </a>
+        {% if session.get('adm') %}
+            <a href="/painel">Painel</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        {% elif cliente_logado %}
+            <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+            <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+            <a href="/sair-cliente" class="btn-tesla">Sair</a>
+        {% else %}
+            <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+            <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+        {% endif %}
+    </div>
+</nav>
+
+    <div class="carrinho-wrapper">
+        <div class="section-header" style="text-align: left; margin-bottom: 40px;">
+            <div class="section-label">Carrinho</div>
+            <h1 class="section-title-tesla">Seus itens</h1>
+        </div>
+
+        {% if itens %}
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px; align-items: start;">
+
+                <div>
+                    {% for item in itens %}
+                        <div class="carrinho-item">
+                            {% if item.imagem %}
+                                <img src="{{ item.imagem }}">
+                            {% else %}
+                                <div class="placeholder">📦</div>
+                            {% endif %}
+
+                            <div>
+                                <a href="/produto/{{ item.id }}" style="color: var(--white); text-decoration: none;">
+                                    <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 4px;">{{ item.nome }}</h3>
+                                </a>
+                                <p style="color: var(--gray-500); font-size: 13px; margin-bottom: 8px;">
+                                    R$ {{ "%.2f"|format(item.preco) }} cada
+                                </p>
+
+                                <div class="quantidade-ctrl">
+                                    <form method="POST" action="/carrinho/atualizar/{{ item.id }}/menos" style="display: inline;">
+                                        <button type="submit">−</button>
+                                    </form>
+                                    <span>{{ item.quantidade }}</span>
+                                    <form method="POST" action="/carrinho/atualizar/{{ item.id }}/mais" style="display: inline;">
+                                        <button type="submit">+</button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div style="text-align: right;">
+                                <p style="font-size: 20px; font-weight: 300; color: var(--white); margin-bottom: 8px;">
+                                    R$ {{ "%.2f"|format(item.subtotal) }}
+                                </p>
+                                <form method="POST" action="/carrinho/remover/{{ item.id }}">
+                                    <button class="btn-delete" type="submit">🗑️ Remover</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="carrinho-resumo">
+                    <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500);">Total</p>
+                    <div class="total">R$ {{ "%.2f"|format(total) }}</div>
+
+                    <form method="POST" action="/checkout">
+                        <button type="submit" class="btn-tesla-full" style="padding: 16px;">
+                            Finalizar compra
+                        </button>
+                    </form>
+
+                    <p style="text-align: center; color: var(--gray-500); font-size: 12px; margin-top: 16px;">
+                        Login de cliente chega na próxima atualização 🚀
+                    </p>
+                </div>
+
+            </div>
+        {% else %}
+            <div style="text-align: center; padding: 100px 20px; background: var(--gray-900); border-radius: 8px;">
+                <div style="font-size: 80px; opacity: 0.3; margin-bottom: 24px;">🛒</div>
+                <h3 style="font-weight: 300; font-size: 24px; margin-bottom: 12px;">Seu carrinho está vazio</h3>
+                <p style="color: var(--gray-500); margin-bottom: 32px;">Adiciona uns produtos aí, chefe</p>
+                <a href="/" class="btn-tesla-outline">Explorar lojas</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer-tesla">
+        <div class="footer-brand">Império do Mauro</div>
+        <p>Marketplace multi-lojas • Sistema por ADM Taymon</p>
+    </footer>
+
+</body>
+</html>

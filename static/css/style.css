@@ -1,0 +1,611 @@
+/* ============================================
+   IMPÉRIO DO MAURO - Tesla Style
+   Minimalismo • Elegância • Premium
+   ============================================ */
+
+:root {
+    --black: #000000;
+    --white: #ffffff;
+    --gray-900: #0a0a0a;
+    --gray-800: #111111;
+    --gray-700: #1a1a1a;
+    --gray-500: #666666;
+    --gray-400: #888888;
+    --gray-300: #bbbbbb;
+    --tesla-red: #e82127;
+    --tesla-red-hover: #c41c21;
+    --border-subtle: rgba(255,255,255,0.08);
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+/* ============================================
+   NAVBAR TESLA - Transparente com blur
+   ============================================ */
+.navbar-tesla {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    background: rgba(0,0,0,0.72);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.navbar-tesla .logo {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--white);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.navbar-tesla .search-bar {
+    flex: 1;
+    max-width: 500px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.navbar-tesla .search-bar input {
+    flex: 1;
+    padding: 10px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px 0 0 4px;
+    color: var(--white);
+    font-size: 13px;
+    font-family: var(--font);
+    transition: all 0.2s;
+}
+
+.navbar-tesla .search-bar input::placeholder {
+    color: var(--gray-500);
+}
+
+.navbar-tesla .search-bar input:focus {
+    outline: none;
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
+.navbar-tesla .search-bar button {
+    padding: 10px 20px;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    color: var(--white);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.navbar-tesla .search-bar button:hover {
+    background: var(--white);
+    color: var(--black);
+}
+
+.navbar-tesla .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.navbar-tesla .nav-links a {
+    color: var(--white);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.navbar-tesla .nav-links a:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.btn-tesla {
+    background: var(--tesla-red) !important;
+    color: var(--white) !important;
+    padding: 10px 24px !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.05em !important;
+    transition: all 0.2s !important;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.btn-tesla:hover {
+    background: var(--tesla-red-hover) !important;
+    transform: translateY(-1px);
+}
+
+/* ============================================
+   HERO TESLA - Minimalista, tipografia gigante
+   ============================================ */
+.hero-tesla {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+}
+
+.hero-tesla h1 {
+    font-size: clamp(40px, 8vw, 96px);
+    font-weight: 200;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    color: var(--white);
+}
+
+.hero-tesla h1 strong {
+    font-weight: 600;
+}
+
+.hero-tesla p {
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 300;
+    color: var(--gray-400);
+    max-width: 600px;
+    letter-spacing: 0.02em;
+    margin-bottom: 48px;
+}
+
+.hero-tesla .cta-group {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-tesla-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--white);
+    padding: 14px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-block;
+}
+
+.btn-tesla-outline:hover {
+    background: var(--white);
+    color: var(--black);
+}
+
+/* ============================================
+   SEÇÕES
+   ============================================ */
+.section-tesla {
+    padding: 100px 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.section-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.section-label {
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--tesla-red);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.section-title-tesla {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--white);
+}
+
+/* ============================================
+   STORE CARDS TESLA - Minimalistas
+   ============================================ */
+.grid-tesla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.store-tesla {
+    background: var(--gray-900);
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    color: var(--white);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px;
+    border: 1px solid var(--border-subtle);
+}
+
+.store-tesla::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.9) 100%);
+    z-index: 1;
+    transition: opacity 0.4s;
+}
+
+.store-tesla:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,255,255,0.2);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.store-tesla .store-emoji {
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    font-size: 40px;
+    opacity: 0.4;
+    z-index: 2;
+}
+
+.store-tesla .store-content {
+    position: relative;
+    z-index: 2;
+}
+
+.store-tesla h3 {
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+}
+
+.store-tesla .store-desc {
+    color: var(--gray-300);
+    font-size: 14px;
+    font-weight: 300;
+    margin-bottom: 16px;
+}
+
+.store-tesla .store-owner {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gray-500);
+    font-weight: 500;
+}
+
+.store-tesla .store-arrow {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    font-size: 20px;
+    color: var(--tesla-red);
+    z-index: 2;
+    transition: transform 0.3s;
+}
+
+.store-tesla:hover .store-arrow {
+    transform: translateX(8px);
+}
+
+/* ============================================
+   PRODUCT CARDS TESLA
+   ============================================ */
+.product-tesla {
+    background: var(--gray-900);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-subtle);
+}
+
+.product-tesla:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.15);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+}
+
+.product-tesla .product-visual {
+    height: 220px;
+    background: linear-gradient(135deg, var(--gray-800), var(--gray-900));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+.product-tesla:hover .product-visual {
+    opacity: 0.9;
+}
+
+.product-tesla .product-content {
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.product-tesla h4 {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    color: var(--white);
+}
+
+.product-tesla .product-desc {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--gray-400);
+    flex: 1;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.product-tesla .product-price {
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 16px;
+}
+
+.product-tesla .product-price::before {
+    content: 'R$ ';
+    font-size: 14px;
+    color: var(--gray-500);
+    font-weight: 400;
+}
+
+.btn-product {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+}
+
+.btn-product:hover {
+    background: var(--white);
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.btn-delete {
+    background: transparent;
+    color: var(--gray-500);
+    border: 1px solid var(--border-subtle);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    color: var(--tesla-red);
+    border-color: var(--tesla-red);
+}
+
+/* ============================================
+   FORMULÁRIOS TESLA
+   ============================================ */
+.form-tesla {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--gray-900);
+    padding: 48px 40px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+}
+
+.form-tesla h2 {
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.form-tesla .form-subtitle {
+    text-align: center;
+    color: var(--gray-500);
+    font-size: 13px;
+    font-weight: 300;
+    margin-bottom: 32px;
+}
+
+.input-tesla {
+    width: 100%;
+    padding: 14px 16px;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--white);
+    font-size: 14px;
+    font-family: var(--font);
+    font-weight: 300;
+    margin-bottom: 16px;
+    transition: all 0.2s;
+}
+
+.input-tesla::placeholder {
+    color: var(--gray-500);
+}
+
+.input-tesla:focus {
+    outline: none;
+    border-color: var(--white);
+    background: rgba(255,255,255,0.02);
+}
+
+textarea.input-tesla {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.btn-tesla-full {
+    width: 100%;
+    padding: 16px;
+    background: var(--tesla-red);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+}
+
+.btn-tesla-full:hover {
+    background: var(--tesla-red-hover);
+}
+
+/* ============================================
+   FOOTER TESLA
+   ============================================ */
+.footer-tesla {
+    border-top: 1px solid var(--border-subtle);
+    padding: 60px 48px 40px;
+    text-align: center;
+    color: var(--gray-500);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 80px;
+}
+
+.footer-tesla .footer-brand {
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.footer-tesla a {
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-tesla a:hover {
+    color: var(--white);
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge-tesla {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(232, 33, 39, 0.15);
+    color: var(--tesla-red);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-radius: 3px;
+}
+
+/* ============================================
+   RESPONSIVO
+   ============================================ */
+@media (max-width: 768px) {
+    .navbar-tesla { padding: 16px 20px; gap: 12px; }
+    .navbar-tesla .logo { font-size: 13px; letter-spacing: 0.15em; }
+    .navbar-tesla .search-bar { display: none; }
+    .navbar-tesla .nav-links a { padding: 8px 12px; font-size: 11px; }
+    
+    .section-tesla { padding: 60px 20px; }
+    .hero-tesla { padding: 100px 20px 60px; }
+    
+    .grid-tesla { grid-template-columns: 1fr; gap: 16px; }
+    .store-tesla { min-height: 240px; padding: 24px; }
+    
+    .form-tesla { padding: 32px 24px; }
+}
+
+/* ============================================
+   ANIMAÇÕES
+   ============================================ */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}

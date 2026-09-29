@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ produto[1] }} | Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .produto-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 140px 48px 80px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+        .produto-imagem {
+            background: var(--gray-900);
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-subtle);
+        }
+        .produto-imagem img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .produto-imagem .placeholder {
+            font-size: 120px;
+            opacity: 0.3;
+        }
+        .produto-info h1 {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+        .produto-preco {
+            font-size: 42px;
+            font-weight: 200;
+            color: var(--white);
+            letter-spacing: -0.03em;
+            margin: 24px 0;
+        }
+        .produto-preco::before {
+            content: 'R$ ';
+            font-size: 20px;
+            color: var(--gray-500);
+        }
+        .produto-descricao {
+            color: var(--gray-300);
+            font-size: 15px;
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 32px;
+        }
+        .loja-info {
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .loja-info .loja-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .estrelas {
+            display: inline-flex;
+            gap: 2px;
+            font-size: 16px;
+        }
+        .estrelas .cheia { color: #f39c12; }
+        .estrelas .vazia { color: var(--gray-700); }
+        .avaliacoes-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 48px 80px;
+        }
+        .avaliacao-card {
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+        .form-estrelas {
+            display: flex;
+            gap: 8px;
+            font-size: 32px;
+            margin: 12px 0 16px 0;
+        }
+        .form-estrelas input[type="radio"] {
+            display: none;
+        }
+        .form-estrelas label {
+            cursor: pointer;
+            color: var(--gray-700);
+            transition: color 0.2s;
+        }
+        .form-estrelas input[type="radio"]:checked ~ label,
+        .form-estrelas label:hover,
+        .form-estrelas label:hover ~ label {
+            color: #f39c12;
+        }
+        .form-estrelas {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+        }
+        .form-estrelas label:hover,
+        .form-estrelas label:hover ~ label,
+        .form-estrelas input[type="radio"]:checked ~ label {
+            color: #f39c12;
+        }
+        @media (max-width: 768px) {
+            .produto-wrapper {
+                grid-template-columns: 1fr;
+                gap: 32px;
+                padding: 100px 20px 40px;
+            }
+            .avaliacoes-section { padding: 0 20px 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <form class="search-bar" method="GET" action="/">
+            <input type="text" name="busca" placeholder="Buscar">
+            <button type="submit">Ir</button>
+        </form>
+        <div class="nav-links">
+            <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+                🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+            </a>
+            {% if session.get('adm') %}
+                <a href="/painel">Painel</a>
+                <a href="/logout" class="btn-tesla">Sair</a>
+            {% elif cliente_logado %}
+                <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+                <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+                <a href="/sair-cliente" class="btn-tesla">Sair</a>
+            {% else %}
+                <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+                <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div style="padding: 100px 48px 0; max-width: 1200px; margin: 0 auto;">
+        <a href="/loja/{{ produto[5] }}" style="color: var(--gray-500); text-decoration: none; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;">
+            ← Voltar pra loja
+        </a>
+    </div>
+
+    <div class="produto-wrapper">
+        <div class="produto-imagem">
+            {% if produto[4] %}
+                <img src="{{ produto[4] }}" alt="{{ produto[1] }}">
+            {% else %}
+                <div class="placeholder">📦</div>
+            {% endif %}
+        </div>
+
+        <div class="produto-info">
+            <div class="badge-tesla" style="margin-bottom: 16px;">Produto</div>
+            <h1>{{ produto[1] }}</h1>
+
+            {% if total_aval > 0 %}
+                <div style="display: flex; align-items: center; gap: 8px; margin: 12px 0;">
+                    <div class="estrelas">
+                        {% for i in range(1, 6) %}
+                            <span class="{% if i <= media|round(0, 'floor')|int %}cheia{% else %}vazia{% endif %}">★</span>
+                        {% endfor %}
+                    </div>
+                    <span style="color: var(--gray-400); font-size: 13px;">{{ media }} ({{ total_aval }} avaliaç{% if total_aval == 1 %}ão{% else %}ões{% endif %})</span>
+                </div>
+            {% endif %}
+
+            <div class="produto-preco">{{ "%.2f"|format(produto[2]) }}</div>
+
+            <p class="produto-descricao">{{ produto[3] }}</p>
+
+            <div class="loja-info">
+                {% if produto[8] %}
+                    <img src="{{ produto[8] }}" class="loja-logo">
+                {% else %}
+                    <div class="loja-logo">🏪</div>
+                {% endif %}
+                <div>
+                    <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 4px;">Vendido por</p>
+                    <a href="/loja/{{ produto[5] }}" style="color: var(--white); text-decoration: none; font-size: 16px; font-weight: 500;">
+                        {{ produto[6] }}
+                    </a>
+                    <p style="font-size: 12px; color: var(--gray-500); margin-top: 2px;">{{ produto[7] }}</p>
+                </div>
+            </div>
+
+            <form method="POST" action="/carrinho/adicionar/{{ produto[0] }}">
+                <button type="submit" class="btn-tesla-full" style="padding: 18px; font-size: 14px; letter-spacing: 0.15em;">
+                    🛒 Adicionar ao carrinho
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <section class="avaliacoes-section">
+        <div class="section-header" style="text-align: left; margin-bottom: 32px;">
+            <div class="section-label">{{ total_aval }} avaliaç{% if total_aval == 1 %}ão{% else %}ões{% endif %}</div>
+            <h2 class="section-title-tesla" style="font-size: 28px;">Avaliações</h2>
+        </div>
+
+        {% if cliente_logado %}
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px; margin-bottom: 32px;">
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 16px;">
+                    {% if minha_aval %}Sua avaliação{% else %}Avalie esse produto{% endif %}
+                </p>
+
+                <form method="POST" action="/produto/{{ produto[0] }}/avaliar">
+                    <div class="form-estrelas">
+                        {% for i in [5,4,3,2,1] %}
+                            <input type="radio" name="nota" id="nota{{ i }}" value="{{ i }}" {% if minha_aval and minha_aval[0] == i %}checked{% endif %} required>
+                            <label for="nota{{ i }}">★</label>
+                        {% endfor %}
+                    </div>
+
+                    <textarea name="comentario" class="input-tesla" placeholder="Conta o que achou (opcional)">{% if minha_aval %}{{ minha_aval[1] }}{% endif %}</textarea>
+
+                    <button type="submit" class="btn-tesla" style="padding: 12px 32px; margin-top: 8px;">
+                        {% if minha_aval %}Atualizar avaliação{% else %}Enviar avaliação{% endif %}
+                    </button>
+                </form>
+            </div>
+        {% else %}
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 24px; margin-bottom: 32px; text-align: center;">
+                <p style="color: var(--gray-400); font-size: 14px; margin-bottom: 16px;">Faça login pra avaliar esse produto</p>
+                <a href="/entrar" class="btn-tesla">Entrar</a>
+            </div>
+        {% endif %}
+
+        {% if avaliacoes %}
+            {% for av in avaliacoes %}
+                <div class="avaliacao-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="color: var(--white); font-size: 15px;">{{ av[3] }}</span>
+                            <div class="estrelas">
+                                {% for i in range(1, 6) %}
+                                    <span class="{% if i <= av[0] %}cheia{% else %}vazia{% endif %}">★</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <span style="color: var(--gray-500); font-size: 12px;">{% if av[2] %}{{ av[2][:10] }}{% else %}—{% endif %}</span>
+                    </div>
+                    {% if av[1] %}
+                        <p style="color: var(--gray-300); font-size: 14px; line-height: 1.6;">{{ av[1] }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align: center; padding: 60px 20px; background: var(--gray-900); border-radius: 8px; color: var(--gray-500);">
+                Nenhuma avaliação ainda. Seja o primeiro!
+            </div>
+        {% endif %}
+    </section>
+
+    {% if relacionados %}
+        <section class="avaliacoes-section">
+            <div class="section-header" style="text-align: left; margin-bottom: 32px;">
+                <div class="section-label">Da mesma loja</div>
+                <h2 class="section-title-tesla" style="font-size: 28px;">Você também pode gostar</h2>
+            </div>
+
+            <div class="grid-tesla">
+                {% for r in relacionados %}
+                    <a href="/produto/{{ r[0] }}" class="product-tesla" style="text-decoration: none; color: inherit;">
+                        {% if r[3] %}
+                            <div style="height: 200px; overflow: hidden;">
+                                <img src="{{ r[3] }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            </div>
+                        {% else %}
+                            <div class="product-visual">📦</div>
+                        {% endif %}
+                        <div class="product-content">
+                            <h4>{{ r[1] }}</h4>
+                            <div class="product-price">{{ "%.2f"|format(r[2]) }}</div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    <footer class="footer-tesla">
+        <div class="footer-brand">Império do Mauro</div>
+        <p>Marketplace multi-lojas • Sistema por ADM Taymon</p>
+    </footer>
+
+</body>
+</html>

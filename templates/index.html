@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <form class="search-bar" method="GET" action="/">
+            <input type="text" name="busca" placeholder="Buscar" value="{{ busca or '' }}">
+            <button type="submit">Ir</button>
+        </form>
+        <div class="nav-links">
+            <a href="/carrinho" style="position: relative; color: var(--white); text-decoration: none; font-size: 20px; padding: 8px 12px;">
+                🛒{% if total_carrinho and total_carrinho > 0 %}<span style="position: absolute; top: 0; right: 0; background: var(--tesla-red); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px;">{{ total_carrinho }}</span>{% endif %}
+            </a>
+            {% if session.get('adm') %}
+                <a href="/painel">Painel</a>
+                <a href="/logout" class="btn-tesla">Sair</a>
+            {% elif cliente_logado %}
+                <a href="/meus-pedidos" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Meus pedidos</a>
+                <a href="/minha-conta" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Olá, {{ cliente_nome.split(' ')[0] }}</a>
+                <a href="/sair-cliente" class="btn-tesla">Sair</a>
+            {% else %}
+                <a href="/entrar" style="color: var(--white); text-decoration: none; font-size: 13px; padding: 8px 12px;">Entrar</a>
+                <a href="/cadastro" class="btn-tesla">Cadastrar</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <section class="hero-tesla">
+        <h1>O marketplace<br><strong>do futuro.</strong></h1>
+        <p>Lojas independentes. Produtos únicos. Uma experiência sem igual.</p>
+    </section>
+
+    <section class="section-tesla" id="lojas">
+
+        {% if categorias %}
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 48px; justify-content: center;">
+                <a href="/" style="padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s; {% if not categoria_atual %}background: var(--white); color: var(--black);{% else %}background: transparent; color: var(--gray-300); border: 1px solid var(--border-subtle);{% endif %}">
+                    Todas
+                </a>
+                {% for cat in categorias %}
+                    <a href="/?categoria={{ cat[0] }}" style="padding: 10px 20px; border-radius: 4px; text-decoration: none; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s; {% if categoria_atual == cat[0]|string %}background: var(--white); color: var(--black);{% else %}background: transparent; color: var(--gray-300); border: 1px solid var(--border-subtle);{% endif %}">
+                        {{ cat[2] }} {{ cat[1] }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="section-header">
+            <div class="section-label">{{ lojas|length }} loja{% if lojas|length != 1 %}s{% endif %}</div>
+            <h2 class="section-title-tesla">
+                {% if busca %}
+                    Resultados para "{{ busca }}"
+                {% else %}
+                    Lojas em destaque
+                {% endif %}
+            </h2>
+        </div>
+
+        {% if lojas %}
+            <div class="grid-tesla">
+                {% for loja in lojas %}
+                    <a href="/loja/{{ loja[0] }}" class="store-tesla animate-in" style="{% if loja[4] %}background-image: linear-gradient(180deg, rgba(0,0,0,0.3), rgba(0,0,0,0.95)), url('{{ loja[4] }}'); background-size: cover; background-position: center;{% endif %}">
+                        {% if not loja[4] %}
+                            <div class="store-emoji">🏪</div>
+                        {% endif %}
+                        <div class="store-content">
+                            <h3>{{ loja[1] }}</h3>
+                            <p class="store-desc">{{ loja[2] }}</p>
+                            <p class="store-owner">Por {{ loja[3] }}</p>
+                        </div>
+                        <div class="store-arrow">→</div>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="text-align:center; padding: 80px 20px; color: var(--gray-500);">
+                <h3 style="font-weight: 300; font-size: 24px;">
+                    {% if busca or categoria_atual %}
+                        Nenhuma loja encontrada
+                    {% else %}
+                        Nenhuma loja cadastrada ainda
+                    {% endif %}
+                </h3>
+            </div>
+        {% endif %}
+    </section>
+
+    <footer class="footer-tesla">
+        <div class="footer-brand">Império do Mauro</div>
+        <p>Marketplace multi-lojas • Sistema por ADM Taymon</p>
+        <p style="margin-top: 20px; opacity: 0.5;">© 2026 — Todos os direitos reservados</p>
+    </footer>
+
+</body>
+</html>

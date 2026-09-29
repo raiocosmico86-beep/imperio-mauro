@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos | Admin</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gray-500);
+            margin-bottom: 8px;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 200;
+            color: var(--white);
+            letter-spacing: -0.02em;
+        }
+        .pedido-row {
+            background: var(--gray-900);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 12px;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto;
+            gap: 20px;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.2s;
+        }
+        .pedido-row:hover {
+            border-color: rgba(255,255,255,0.2);
+            transform: translateX(4px);
+        }
+        .filtros {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+        .filtro-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            color: var(--gray-300);
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .filtro-btn:hover, .filtro-btn.ativo {
+            background: var(--white);
+            color: var(--black);
+            border-color: var(--white);
+        }
+        .status-badge {
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 3px;
+        }
+        .status-pendente { background: rgba(243,156,18,0.15); color: #f39c12; }
+        .status-enviado { background: rgba(52,152,219,0.15); color: #3498db; }
+        .status-entregue { background: rgba(46,204,113,0.15); color: #2ecc71; }
+        .status-cancelado { background: rgba(231,76,60,0.15); color: #e74c3c; }
+        @media (max-width: 768px) {
+            .pedido-row { grid-template-columns: 1fr; gap: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <div class="nav-links" style="margin-left: auto;">
+            <a href="/painel">Painel</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        </div>
+    </nav>
+
+    <section style="padding: 140px 48px 40px;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div class="section-header" style="text-align: left; margin-bottom: 40px;">
+                <div class="section-label">Admin</div>
+                <h1 class="section-title-tesla">Pedidos</h1>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total de pedidos</div>
+                    <div class="stat-value">{{ total_pedidos }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Pendentes</div>
+                    <div class="stat-value" style="color: #f39c12;">{{ pendentes }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Em vendas</div>
+                    <div class="stat-value">R$ {{ "%.2f"|format(total_vendas) }}</div>
+                </div>
+            </div>
+
+            <div class="filtros">
+                <a href="/admin/pedidos" class="filtro-btn {% if not filtro %}ativo{% endif %}">Todos</a>
+                <a href="/admin/pedidos?status=pendente" class="filtro-btn {% if filtro == 'pendente' %}ativo{% endif %}">Pendentes</a>
+                <a href="/admin/pedidos?status=enviado" class="filtro-btn {% if filtro == 'enviado' %}ativo{% endif %}">Enviados</a>
+                <a href="/admin/pedidos?status=entregue" class="filtro-btn {% if filtro == 'entregue' %}ativo{% endif %}">Entregues</a>
+                <a href="/admin/pedidos?status=cancelado" class="filtro-btn {% if filtro == 'cancelado' %}ativo{% endif %}">Cancelados</a>
+            </div>
+
+            {% if pedidos %}
+                {% for p in pedidos %}
+                    <a href="/admin/pedido/{{ p[0] }}" class="pedido-row">
+                        <span style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500);">#{{ p[0] }}</span>
+                        <div>
+                            <p style="color: var(--white); font-size: 15px; margin-bottom: 2px;">{{ p[5] }}</p>
+                            <p style="color: var(--gray-500); font-size: 12px;">{{ p[3][:10] }}</p>
+                        </div>
+                        <span class="status-badge status-{{ p[2] }}">{{ p[2] }}</span>
+                        <span style="color: var(--white); font-size: 18px; font-weight: 300;">R$ {{ "%.2f"|format(p[1]) }}</span>
+                        <span style="color: var(--tesla-red);">→</span>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div style="text-align: center; padding: 80px 20px; background: var(--gray-900); border-radius: 8px; color: var(--gray-500);">
+                    <h3 style="font-weight: 300; font-size: 20px;">Nenhum pedido {% if filtro %}com esse status{% endif %} ainda</h3>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<nav class="navbar-tesla">
+    <a href="/" class="logo">Império do Mauro</a>
+    <div class="nav-links" style="margin-left:auto;">
+        <a href="/carrinho">← Voltar ao carrinho</a>
+    </div>
+</nav>
+
+<div style="max-width:1100px;margin:0 auto;padding:140px 48px 80px;display:grid;grid-template-columns:1.5fr 1fr;gap:40px;align-items:start;">
+    <div>
+        <h1 style="font-size:36px;font-weight:200;margin-bottom:32px;">Endereço de entrega</h1>
+
+        {% if erro %}
+            <div style="background:rgba(232,33,39,0.1);border:1px solid rgba(232,33,39,0.4);color:var(--tesla-red);padding:14px;border-radius:4px;margin-bottom:16px;">⚠️ {{ erro }}</div>
+        {% endif %}
+
+        <form method="POST" action="/checkout" class="form-tesla" style="max-width:100%;">
+            <label style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px;display:block;">Nome completo</label>
+            <input type="text" name="nome_entrega" class="input-tesla" required>
+
+            <label style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px;display:block;">Endereço</label>
+            <input type="text" name="endereco" class="input-tesla" required>
+
+            <label style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px;display:block;">Cidade</label>
+            <input type="text" name="cidade" class="input-tesla" required>
+
+            <label style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);margin-bottom:8px;display:block;">CEP</label>
+            <input type="text" name="cep" class="input-tesla" required>
+
+            <button type="submit" class="btn-tesla-full" style="margin-top:16px;padding:16px;">✅ Confirmar pedido</button>
+        </form>
+    </div>
+
+    <div style="background:var(--gray-900);border:1px solid var(--border-subtle);border-radius:8px;padding:32px;">
+        <p style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);margin-bottom:20px;">Resumo do pedido</p>
+
+        {% for item in itens %}
+            <div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-subtle);">
+                <div>
+                    <p style="font-size:14px;color:var(--white);">{{ item.nome }}</p>
+                    <p style="font-size:12px;color:var(--gray-500);">x{{ item.quantidade }}</p>
+                </div>
+                <p style="font-size:14px;color:var(--white);">R$ {{ "%.2f"|format(item.subtotal) }}</p>
+            </div>
+        {% endfor %}
+
+        <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--border-subtle);display:flex;justify-content:space-between;">
+            <span style="font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gray-500);">Total</span>
+            <span style="font-size:28px;font-weight:200;color:var(--white);">R$ {{ "%.2f"|format(total) }}</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

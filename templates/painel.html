@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel ADM | Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <div class="nav-links" style="margin-left: auto;">
+            <a href="/">Ver site</a>
+            <a href="/admin/pedidos">Pedidos</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        </div>
+    </nav>
+
+    <section style="padding: 140px 48px 40px; text-align: center;">
+        <div class="badge-tesla" style="margin-bottom: 20px;">Admin</div>
+        <h1 style="font-size: clamp(32px, 5vw, 56px); font-weight: 200; letter-spacing: -0.02em;">
+            Painel de controle
+        </h1>
+        <p style="color: var(--gray-400); font-weight: 300; margin-top: 12px;">Gerencie o império</p>
+    </section>
+
+    <section class="section-tesla" style="padding-top: 40px;">
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px;">
+
+            <div>
+                <h2 class="section-title-tesla" style="font-size: 24px; margin-bottom: 24px;">Nova loja</h2>
+
+                {% if erro %}
+                    <div style="background: rgba(232,33,39,0.1); border: 1px solid rgba(232,33,39,0.4); color: var(--tesla-red); padding: 14px; border-radius: 4px; margin-bottom: 16px; font-size: 13px;">
+                        ⚠️ {{ erro }}
+                    </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data" class="form-tesla" style="padding: 32px 24px;">
+                    <input type="text" name="nome" class="input-tesla" placeholder="Nome da loja" required>
+                    <input type="text" name="descricao" class="input-tesla" placeholder="Descrição" required>
+                    <input type="text" name="dono" class="input-tesla" placeholder="Dono da loja" required>
+
+                    <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px;">
+                        Categoria
+                    </label>
+                    <select name="categoria_id" class="input-tesla" style="margin-bottom: 12px;">
+                        <option value="">— Sem categoria —</option>
+                        {% for cat in categorias %}
+                            <option value="{{ cat[0] }}">{{ cat[2] }} {{ cat[1] }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px;">
+                        Logo da loja <span style="color: var(--tesla-red);">*</span>
+                    </label>
+                    <input type="file" name="imagem" accept="image/*" class="input-tesla" style="padding: 10px;" required>
+
+                    <button type="submit" class="btn-tesla-full">Cadastrar loja</button>
+                </form>
+            </div>
+
+            <div>
+                <h2 class="section-title-tesla" style="font-size: 24px; margin-bottom: 24px;">Lojas ({{ lojas|length }})</h2>
+
+                {% if lojas %}
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        {% for loja in lojas %}
+                            <a href="/loja/{{ loja[0] }}" class="store-tesla" style="min-height: auto; padding: 20px;">
+                                <div style="position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                                    <div style="display: flex; align-items: center; gap: 16px; flex: 1;">
+                                        {% if loja[4] %}
+                                            <img src="{{ loja[4] }}" style="width: 48px; height: 48px; border-radius: 4px; object-fit: cover;">
+                                        {% else %}
+                                            <div style="width: 48px; height: 48px; border-radius: 4px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 22px;">🏪</div>
+                                        {% endif %}
+                                        <div>
+                                            <h3 style="font-size: 18px; margin-bottom: 4px;">{{ loja[1] }}</h3>
+                                            <p style="font-size: 13px; color: var(--gray-400);">{{ loja[2] }}</p>
+                                            <p style="font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-500); margin-top: 4px;">{{ loja[3] }}</p>
+                                        </div>
+                                    </div>
+                                    <span style="color: var(--tesla-red); font-size: 20px;">→</span>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="text-align: center; padding: 60px 20px; background: var(--gray-900); border-radius: 8px; color: var(--gray-500);">
+                        Nenhuma loja ainda
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="footer-tesla">
+        <div class="footer-brand">Império do Mauro</div>
+        <p>Painel ADM • Sistema por ADM Taymon</p>
+    </footer>
+
+</body>
+</html>
