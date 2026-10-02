@@ -712,6 +712,252 @@ def avaliar_produto(produto_id):
     conn.close()
     return redirect(url_for("ver_produto", produto_id=produto_id))
 
+
+# ============================================
+# PIX - PAGAMENTO
+# ============================================
+import qrcode
+import io
+import base64
+
+def get_config(chave):
+    """Pega um valor da tabela config."""
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT valor FROM config WHERE chave=?", (chave,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else None
+
+def gerar_string_pix(chave, nome, cidade, valor, txid="***"):
+    """Gera a string EMV do Pix (padrão dos bancos)."""
+    def tlv(id_, value):
+        return f"{id_}{len(value):02d}{value}"
+    
+    valor_str = f"{valor:.2f}"
+    nome = nome[:25].upper()
+    cidade = cidade[:15].upper()
+    
+    payload = (
+        tlv("00", "01") +
+        tlv("26", tlv("00", "BR.GOV.BCB.PIX") + tlv("01", chave)) +
+        tlv("52", "0000") +
+        tlv("53", "986") +
+        tlv("54", valor_str) +
+        tlv("58", "BR") +
+        tlv("59", nome) +
+        tlv("60", cidade) +
+        tlv("62", tlv("05", txid))
+    )
+    
+    crc = 0xFFFF
+    for byte in (payload + "6304").encode("utf-8"):
+        crc ^= byte << 8
+        for _ in range(8):
+            crc = (crc << 1) ^ 0x1021 if crc & 0x8000 else crc << 1
+        crc &= 0xFFFF
+    crc_hex = f"{crc:04X}"
+    
+    return payload + "6304" + crc_hex
+
+def gerar_qr_base64(texto):
+    """Gera QR code como imagem base64 pra embedar em HTML."""
+    qr = qrcode.QRCode(version=1, box_size=10, border=2)
+    qr.add_data(texto)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode()
+
+@app.route("/pedido/<int:pedido_id>/pagar")
+def pagar_pedido(pedido_id):
+    if not cliente_logado():
+        return redirect(url_for("entrar_cliente"))
+    
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT id, total, status FROM pedidos WHERE id=? AND cliente_id=?",
+              (pedido_id, session["cliente_id"]))
+    pedido = c.fetchone()
+    conn.close()
+    
+    if not pedido:
+        return render_template("404.html"), 404
+    
+    if pedido[2] == "pago":
+        return redirect(url_for("ver_pedido", pedido_id=pedido_id))
+    
+    chave = get_config("pix_chave") or "chave@exemplo.com"
+    nome = get_config("pix_nome") or "Recebedor"
+    cidade = get_config("pix_cidade") or "CIDADE"
+    
+    string_pix = gerar_string_pix(chave, nome, cidade, pedido[1], f"PEDIDO{pedido_id}")
+    qr_base64 = gerar_qr_base64(string_pix)
+    
+    return render_template("pagamento.html", pedido=pedido, string_pix=string_pix, qr_base64=qr_base64)
+
+@app.route("/pedido/<int:pedido_id>/confirmar-pagamento", methods=["POST"])
+def confirmar_pagamento(pedido_id):
+    if not cliente_logado():
+        return redirect(url_for("entrar_cliente"))
+    
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("UPDATE pedidos SET status='pago' WHERE id=? AND cliente_id=?",
+              (pedido_id, session["cliente_id"]))
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for("ver_pedido", pedido_id=pedido_id))
+
+@app.route("/admin/config", methods=["GET", "POST"])
+def admin_config():
+    if "adm" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        chave = request.form.get("pix_chave", "").strip()
+        nome = request.form.get("pix_nome", "").strip()
+        cidade = request.form.get("pix_cidade", "").strip()
+        
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_chave', ?)", (chave,))
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_nome', ?)", (nome,))
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_cidade', ?)", (cidade,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_config"))
+    
+    return render_template("admin_config.html",
+                           pix_chave=get_config("pix_chave") or "",
+                           pix_nome=get_config("pix_nome") or "",
+                           pix_cidade=get_config("pix_cidade") or "")
+
+
+# ============================================
+# PIX - PAGAMENTO
+# ============================================
+import qrcode
+import io
+import base64
+
+def get_config(chave):
+    """Pega um valor da tabela config."""
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT valor FROM config WHERE chave=?", (chave,))
+    row = c.fetchone()
+    conn.close()
+    return row[0] if row else None
+
+def gerar_string_pix(chave, nome, cidade, valor, txid="***"):
+    """Gera a string EMV do Pix (padrão dos bancos)."""
+    def tlv(id_, value):
+        return f"{id_}{len(value):02d}{value}"
+    
+    valor_str = f"{valor:.2f}"
+    nome = nome[:25].upper()
+    cidade = cidade[:15].upper()
+    
+    payload = (
+        tlv("00", "01") +
+        tlv("26", tlv("00", "BR.GOV.BCB.PIX") + tlv("01", chave)) +
+        tlv("52", "0000") +
+        tlv("53", "986") +
+        tlv("54", valor_str) +
+        tlv("58", "BR") +
+        tlv("59", nome) +
+        tlv("60", cidade) +
+        tlv("62", tlv("05", txid))
+    )
+    
+    crc = 0xFFFF
+    for byte in (payload + "6304").encode("utf-8"):
+        crc ^= byte << 8
+        for _ in range(8):
+            crc = (crc << 1) ^ 0x1021 if crc & 0x8000 else crc << 1
+        crc &= 0xFFFF
+    crc_hex = f"{crc:04X}"
+    
+    return payload + "6304" + crc_hex
+
+def gerar_qr_base64(texto):
+    """Gera QR code como imagem base64 pra embedar em HTML."""
+    qr = qrcode.QRCode(version=1, box_size=10, border=2)
+    qr.add_data(texto)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode()
+
+@app.route("/pedido/<int:pedido_id>/pagar")
+def pagar_pedido(pedido_id):
+    if not cliente_logado():
+        return redirect(url_for("entrar_cliente"))
+    
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("SELECT id, total, status FROM pedidos WHERE id=? AND cliente_id=?",
+              (pedido_id, session["cliente_id"]))
+    pedido = c.fetchone()
+    conn.close()
+    
+    if not pedido:
+        return render_template("404.html"), 404
+    
+    if pedido[2] == "pago":
+        return redirect(url_for("ver_pedido", pedido_id=pedido_id))
+    
+    chave = get_config("pix_chave") or "chave@exemplo.com"
+    nome = get_config("pix_nome") or "Recebedor"
+    cidade = get_config("pix_cidade") or "CIDADE"
+    
+    string_pix = gerar_string_pix(chave, nome, cidade, pedido[1], f"PEDIDO{pedido_id}")
+    qr_base64 = gerar_qr_base64(string_pix)
+    
+    return render_template("pagamento.html", pedido=pedido, string_pix=string_pix, qr_base64=qr_base64)
+
+@app.route("/pedido/<int:pedido_id>/confirmar-pagamento", methods=["POST"])
+def confirmar_pagamento(pedido_id):
+    if not cliente_logado():
+        return redirect(url_for("entrar_cliente"))
+    
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+    c.execute("UPDATE pedidos SET status='pago' WHERE id=? AND cliente_id=?",
+              (pedido_id, session["cliente_id"]))
+    conn.commit()
+    conn.close()
+    
+    return redirect(url_for("ver_pedido", pedido_id=pedido_id))
+
+@app.route("/admin/config", methods=["GET", "POST"])
+def admin_config():
+    if "adm" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        chave = request.form.get("pix_chave", "").strip()
+        nome = request.form.get("pix_nome", "").strip()
+        cidade = request.form.get("pix_cidade", "").strip()
+        
+        conn = sqlite3.connect(DB)
+        c = conn.cursor()
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_chave', ?)", (chave,))
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_nome', ?)", (nome,))
+        c.execute("INSERT OR REPLACE INTO config (chave, valor) VALUES ('pix_cidade', ?)", (cidade,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for("admin_config"))
+    
+    return render_template("admin_config.html",
+                           pix_chave=get_config("pix_chave") or "",
+                           pix_nome=get_config("pix_nome") or "",
+                           pix_cidade=get_config("pix_cidade") or "")
+
 @app.route("/logout")
 def logout():
     session.pop("adm", None)

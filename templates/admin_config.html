@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Configurações | Admin</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <div class="nav-links" style="margin-left: auto;">
+            <a href="/painel">Painel</a>
+            <a href="/admin/pedidos">Pedidos</a>
+            <a href="/admin/categorias">Categorias</a>
+            <a href="/logout" class="btn-tesla">Sair</a>
+        </div>
+    </nav>
+
+    <section style="padding: 140px 48px 40px;">
+        <div style="max-width: 700px; margin: 0 auto;">
+
+            <div class="section-header" style="text-align: left; margin-bottom: 40px;">
+                <div class="section-label">Admin</div>
+                <h1 class="section-title-tesla">Configurações de Pagamento</h1>
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 32px;">
+
+                <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 24px;">
+                    💰 Chave Pix
+                </p>
+
+                <form method="POST">
+
+                    <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px;">
+                        Chave Pix (CPF, email, telefone ou aleatória)
+                    </label>
+                    <input type="text" name="pix_chave" class="input-tesla" value="{{ pix_chave }}" placeholder="sua-chave@pix.com" required>
+
+                    <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; margin-top: 12px;">
+                        Nome do recebedor (como aparece no extrato)
+                    </label>
+                    <input type="text" name="pix_nome" class="input-tesla" value="{{ pix_nome }}" placeholder="Seu Nome" required maxlength="25">
+
+                    <label style="display: block; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px; margin-top: 12px;">
+                        Cidade do recebedor
+                    </label>
+                    <input type="text" name="pix_cidade" class="input-tesla" value="{{ pix_cidade }}" placeholder="SAO PAULO" required maxlength="15">
+
+                    <button type="submit" class="btn-tesla-full" style="margin-top: 20px;">Salvar configurações</button>
+                </form>
+
+            </div>
+
+            <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 24px; margin-top: 24px;">
+                <p style="color: var(--gray-400); font-size: 13px; line-height: 1.7;">
+                    💡 <strong style="color: var(--white);">Como funciona:</strong><br>
+                    Quando o cliente finaliza um pedido, ele é redirecionado pra uma página com o QR Code Pix.
+                    O valor já vem preenchido com o total do pedido. Depois de pagar, ele clica em "Já paguei" e o pedido vira <strong style="color: #2ecc71;">pago</strong>.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>

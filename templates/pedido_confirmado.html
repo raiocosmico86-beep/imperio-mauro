@@ -71,8 +71,14 @@
         </div>
 
         <div style="text-align: center;">
+            {% if pedido[7] == 'pendente' %}
+                <a href="/pedido/{{ pedido[0] }}/pagar" class="btn-tesla" style="padding: 16px 40px; font-size: 14px; letter-spacing: 0.15em;">
+                    💰 Pagar com Pix
+                </a>
+                <br><br>
+            {% endif %}
             <a href="/meus-pedidos" class="btn-tesla-outline">Ver todos os pedidos</a>
-            <a href="/" class="btn-tesla" style="margin-left: 12px;">Continuar comprando</a>
+            <a href="/" class="btn-tesla-outline" style="margin-left: 12px;">Continuar comprando</a>
         </div>
     </section>
 

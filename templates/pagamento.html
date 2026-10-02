@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagar Pedido #{{ pedido[0] }} | Império do Mauro</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar-tesla">
+        <a href="/" class="logo">Império do Mauro</a>
+        <div class="nav-links" style="margin-left: auto;">
+            <a href="/pedido/{{ pedido[0] }}">← Voltar</a>
+        </div>
+    </nav>
+
+    <section style="padding: 140px 24px 40px; text-align: center;">
+        <div style="font-size: 60px; margin-bottom: 20px;">💰</div>
+        <div class="badge-tesla" style="margin-bottom: 20px;">Pagamento Pix</div>
+        <h1 style="font-size: clamp(28px, 5vw, 48px); font-weight: 200; letter-spacing: -0.02em;">
+            Pague com Pix
+        </h1>
+        <p style="color: var(--gray-400); font-weight: 300; margin-top: 12px;">
+            Escaneie o QR Code no app do seu banco
+        </p>
+    </section>
+
+    <section class="section-tesla" style="padding-top: 20px; max-width: 600px;">
+
+        <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 40px 32px; text-align: center;">
+
+            <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 16px;">Valor a pagar</p>
+            <p style="font-size: 42px; font-weight: 200; letter-spacing: -0.02em; color: var(--white); margin-bottom: 32px;">
+                R$ {{ "%.2f"|format(pedido[1]) }}
+            </p>
+
+            <div style="background: #fff; padding: 16px; border-radius: 12px; display: inline-block; margin-bottom: 24px;">
+                <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR Code Pix" style="width: 260px; height: 260px; display: block;">
+            </div>
+
+            <p style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 8px;">Ou copia o código Pix</p>
+            <div style="background: var(--black); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 16px; margin-bottom: 24px;">
+                <p id="pix-code" style="font-family: monospace; font-size: 11px; color: var(--gray-400); word-break: break-all; line-height: 1.5;">{{ string_pix }}</p>
+            </div>
+
+            <button onclick="copiarPix()" class="btn-tesla-outline" style="margin-bottom: 12px; width: 100%; padding: 14px;">
+                📋 Copiar código Pix
+            </button>
+
+        </div>
+
+        <div style="background: var(--gray-900); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 32px; margin-top: 24px; text-align: center;">
+            <p style="color: var(--gray-400); font-size: 14px; margin-bottom: 20px;">
+                Depois de pagar, clica no botão abaixo pra confirmar:
+            </p>
+            <form method="POST" action="/pedido/{{ pedido[0] }}/confirmar-pagamento">
+                <button type="submit" class="btn-tesla-full" style="padding: 18px; font-size: 14px; letter-spacing: 0.15em;">
+                    ✅ Já paguei
+                </button>
+            </form>
+            <p style="color: var(--gray-500); font-size: 12px; margin-top: 16px;">
+                (Isso é uma simulação — em produção, o banco confirma automaticamente)
+            </p>
+        </div>
+
+    </section>
+
+    <script>
+        function copiarPix() {
+            const texto = document.getElementById("pix-code").innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("✅ Código Pix copiado! Cola no app do teu banco.");
+            });
+        }
+    </script>
+
+    <footer class="footer-tesla">
+        <div class="footer-brand">Império do Mauro</div>
+        <p>Pagamento via Pix • Sistema por ADM Taymon</p>
+    </footer>
+
+</body>
+</html>
